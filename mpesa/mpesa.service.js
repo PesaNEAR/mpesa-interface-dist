@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MpesaService = void 0;
 const axios_1 = require("@nestjs/axios");
 const common_1 = require("@nestjs/common");
-const rxjs_1 = require("rxjs");
 let MpesaService = class MpesaService {
     constructor(httpService) {
         this.httpService = httpService;
@@ -30,12 +29,9 @@ let MpesaService = class MpesaService {
                 Authorization: 'Basic ' + auth,
             },
         };
-        this.httpService.get(url, requestConfig).pipe((0, rxjs_1.catchError)((e) => {
-            var _a, _b;
-            throw new common_1.HttpException((_a = e.response) === null || _a === void 0 ? void 0 : _a.data, (_b = e.response) === null || _b === void 0 ? void 0 : _b.status);
-        }), (0, rxjs_1.map)((response) => response.data), (0, rxjs_1.tap)((data) => {
-            _callback(data);
-        }));
+        this.httpService.get(url, requestConfig).subscribe((response) => {
+            _callback(response.data);
+        });
     }
 };
 MpesaService = __decorate([

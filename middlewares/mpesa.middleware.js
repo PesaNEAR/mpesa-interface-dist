@@ -18,8 +18,12 @@ let MpesaMiddleware = class MpesaMiddleware {
     }
     use(req, res, next) {
         this.mpesaService.accessToken((data) => {
-            req.access_token = data.access_token;
-            next();
+            req.access_token = data === null || data === void 0 ? void 0 : data.access_token;
+            req.expires_in = data === null || data === void 0 ? void 0 : data.expires_in;
+            if (req.access_token != undefined) {
+                next();
+            }
+            return new common_1.UnauthorizedException('Access Denied!');
         });
     }
 };
