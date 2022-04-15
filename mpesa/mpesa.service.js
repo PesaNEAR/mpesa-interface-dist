@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MpesaService = void 0;
 const axios_1 = require("@nestjs/axios");
 const common_1 = require("@nestjs/common");
+const response_1 = require("../data/response");
 let MpesaService = class MpesaService {
     constructor(httpService) {
         this.httpService = httpService;
@@ -32,6 +33,48 @@ let MpesaService = class MpesaService {
         this.httpService.get(url, requestConfig).subscribe((response) => {
             _callback(response.data);
         });
+    }
+    stkPush(accessToken, amount, senderAccount, _callback) {
+        const url = process.env.STK_PUSH_URL;
+        const auth = `Bearer ${accessToken}`;
+        const businessShortCode = process.env.BUSINESS_SHORT_CODE;
+        const passKey = process.env.PASS_KEY;
+        const datenow = new Date();
+        const year = datenow.getFullYear();
+        const month = ('0' + (datenow.getMonth() + 1)).slice(-2);
+        const date = ('0' + datenow.getDate()).slice(-2);
+        const hours = ('0' + datenow.getHours()).slice(-2);
+        const minutes = ('0' + datenow.getMinutes()).slice(-2);
+        const seconds = ('0' + datenow.getSeconds()).slice(-2);
+        const timestamp = `${year}${month}${date}${hours}${minutes}${seconds}`;
+        const password = Buffer.from(businessShortCode + passKey + timestamp).toString('base64');
+        const requestConfig = {
+            headers: {
+                Authorization: auth,
+            },
+        };
+        const data = {
+            BusinessShortCode: businessShortCode,
+            Password: password,
+            Timestamp: timestamp,
+            TransactionType: 'CustomerPayBillOnline',
+            Amount: amount,
+            PartyA: senderAccount,
+            PartyB: businessShortCode,
+            PhoneNumber: senderAccount,
+            CallBackURL: `https://${process.env.HOSTNAME}/mpesa/stk_callback`,
+            AccountReference: process.env.ACCOUNT_REFERENCE,
+            TransactionDesc: 'Deposit NEAR tokens',
+        };
+        this.httpService.post(url, data, requestConfig).subscribe((response) => {
+            _callback(response.data);
+        });
+    }
+    storeStkCallbackResponse(response) {
+        response_1.stkCallbackResponse.push(response);
+    }
+    get stkCallbackResponse() {
+        return response_1.stkCallbackResponse;
     }
 };
 MpesaService = __decorate([

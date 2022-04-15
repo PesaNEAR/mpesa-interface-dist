@@ -16,7 +16,10 @@ const mpesa_controller_1 = require("./mpesa/mpesa.controller");
 const mpesa_module_1 = require("./mpesa/mpesa.module");
 let AppModule = class AppModule {
     configure(consumer) {
-        consumer.apply(mpesa_middleware_1.MpesaMiddleware).forRoutes(mpesa_controller_1.MpesaController);
+        consumer
+            .apply(mpesa_middleware_1.MpesaMiddleware)
+            .exclude('/mpesa/stk_callback')
+            .forRoutes(mpesa_controller_1.MpesaController);
     }
 };
 AppModule = __decorate([

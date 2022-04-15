@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MpesaController = void 0;
 const common_1 = require("@nestjs/common");
+const stkDTO_1 = require("../dto/stkDTO");
 const mpesa_service_1 = require("./mpesa.service");
 let MpesaController = class MpesaController {
     constructor(mpesaService) {
@@ -21,6 +22,22 @@ let MpesaController = class MpesaController {
     }
     getCompany(request) {
         return `${this.mpesaService.getCompany()}. Token: ${request.access_token}`;
+    }
+    stkPush(request, res, body) {
+        this.mpesaService.stkPush(request.access_token, body.amount, body.account_number, (data) => {
+            if (data.ResponseCode == 0) {
+            }
+            else {
+            }
+            this.mpesaService.storeStkCallbackResponse(data);
+            res.send(data);
+        });
+    }
+    stkCallback(body) {
+        this.mpesaService.storeStkCallbackResponse(body);
+    }
+    getStkCallback() {
+        return this.mpesaService.stkCallbackResponse;
     }
 };
 __decorate([
@@ -30,6 +47,28 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", String)
 ], MpesaController.prototype, "getCompany", null);
+__decorate([
+    (0, common_1.Post)('/stk'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, stkDTO_1.StkPushDto]),
+    __metadata("design:returntype", void 0)
+], MpesaController.prototype, "stkPush", null);
+__decorate([
+    (0, common_1.Post)('/stk_callback'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], MpesaController.prototype, "stkCallback", null);
+__decorate([
+    (0, common_1.Get)('/stk_callback'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Array)
+], MpesaController.prototype, "getStkCallback", null);
 MpesaController = __decorate([
     (0, common_1.Controller)('mpesa'),
     __metadata("design:paramtypes", [mpesa_service_1.MpesaService])
