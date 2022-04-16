@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MpesaService = void 0;
 const axios_1 = require("@nestjs/axios");
 const common_1 = require("@nestjs/common");
+const balanceResponses_1 = require("../data/balanceResponses");
 const response_1 = require("../data/response");
 let MpesaService = class MpesaService {
     constructor(httpService) {
@@ -75,6 +76,34 @@ let MpesaService = class MpesaService {
     }
     get stkCallbackResponse() {
         return response_1.stkCallbackResponse;
+    }
+    accountBalance(accessToken, _callback) {
+        const url = process.env.BALANCE_URL;
+        const auth = `Bearer ${accessToken}`;
+        const requestConfig = {
+            headers: {
+                Authorization: auth,
+            },
+        };
+        const data = {
+            Initiator: process.env.INITIATOR_NAME,
+            SecurityCredential: process.env.SECURITY_CREDENTIAL,
+            CommandID: 'AccountBalance',
+            PartyA: process.env.PARTY_A,
+            IdentifierType: process.env.IDENTIFIER_TYPE,
+            Remarks: 'Remarks',
+            QueueTimeOutURL: `https://${process.env.HOSTNAME}/mpesa/balance_timeout`,
+            ResultURL: `https://${process.env.HOSTNAME}/mpesa/balance_result`,
+        };
+        this.httpService.post(url, data, requestConfig).subscribe((response) => {
+            _callback(response.data);
+        });
+    }
+    storeBalanceResponse(response) {
+        balanceResponses_1.balanceResponses.push(response);
+    }
+    get balanceResponse() {
+        return balanceResponses_1.balanceResponses;
     }
 };
 MpesaService = __decorate([
