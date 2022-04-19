@@ -18,7 +18,7 @@ let AppModule = class AppModule {
     configure(consumer) {
         consumer
             .apply(mpesa_middleware_1.MpesaMiddleware)
-            .exclude('/mpesa/stk_callback', '/mpesa/balance_result', '/mpesa/balance_timeout')
+            .exclude('/mpesa/stk_callback', '/mpesa/balance_result', '/mpesa/balance_timeout', '/mpesa/b2c_result', '/mpesa/b2c_timeout')
             .forRoutes(mpesa_controller_1.MpesaController);
     }
 };

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MpesaService = void 0;
 const axios_1 = require("@nestjs/axios");
 const common_1 = require("@nestjs/common");
+const b2cResponse_1 = require("../data/b2cResponse");
 const balanceResponses_1 = require("../data/balanceResponses");
 const response_1 = require("../data/response");
 let MpesaService = class MpesaService {
@@ -104,6 +105,36 @@ let MpesaService = class MpesaService {
     }
     get balanceResponse() {
         return balanceResponses_1.balanceResponses;
+    }
+    business_2_customer(accessToken, amount, receiverAccountNumber, occasion, _callback) {
+        const url = process.env.B2C_URL;
+        const auth = `Bearer ${accessToken}`;
+        const requestConfig = {
+            headers: {
+                Authorization: auth,
+            },
+        };
+        const data = {
+            InitiatorName: process.env.INITIATOR_NAME,
+            SecurityCredential: process.env.SECURITY_CREDENTIAL,
+            CommandID: 'BusinessPayment',
+            Amount: amount,
+            PartyA: process.env.PARTY_A,
+            PartyB: receiverAccountNumber,
+            Remarks: 'NEAR withdrawal.',
+            QueueTimeOutURL: `https://${process.env.HOSTNAME}/mpesa/b2c_timeout`,
+            ResultURL: `https://${process.env.HOSTNAME}/mpesa/b2c_result`,
+            Occasion: occasion,
+        };
+        this.httpService.post(url, data, requestConfig).subscribe((response) => {
+            _callback(response.data);
+        });
+    }
+    storeB2cResponse(response) {
+        b2cResponse_1.b2cResponses.push(response);
+    }
+    get b2cResponse() {
+        return b2cResponse_1.b2cResponses;
     }
 };
 MpesaService = __decorate([

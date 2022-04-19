@@ -1,3 +1,4 @@
+import { B2CDto } from 'src/dto/b2cDto';
 import { BalanceResultDto } from 'src/dto/balanceDto';
 import { StkPushDto } from 'src/dto/stkDTO';
 import { StkResultDto } from 'src/dto/stkResultDto';
@@ -13,4 +14,8 @@ export declare class MpesaController {
     balanceTimeout(body: any): void;
     balanceResult(body: BalanceResultDto): void;
     getBalance(): any[];
+    b2c(request: any, res: any, body: B2CDto): void;
+    b2cTimeout(body: any): void;
+    b2cResult(body: any): void;
+    getB2c(): any[];
 }

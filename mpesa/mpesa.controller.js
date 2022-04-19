@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MpesaController = void 0;
 const common_1 = require("@nestjs/common");
+const b2cDto_1 = require("../dto/b2cDto");
 const balanceDto_1 = require("../dto/balanceDto");
 const stkDTO_1 = require("../dto/stkDTO");
 const stkResultDto_1 = require("../dto/stkResultDto");
@@ -58,6 +59,24 @@ let MpesaController = class MpesaController {
     }
     getBalance() {
         return this.mpesaService.balanceResponse;
+    }
+    b2c(request, res, body) {
+        this.mpesaService.business_2_customer(request.access_token, body.amount, body.receiverAccountNumber, null, (data) => {
+            if (data.ResponseCode == 0) {
+            }
+            else {
+            }
+            res.send(data);
+        });
+    }
+    b2cTimeout(body) {
+        this.mpesaService.storeB2cResponse(Object.assign({ name: 'Timeout' }, body));
+    }
+    b2cResult(body) {
+        this.mpesaService.storeB2cResponse(Object.assign({ name: 'Result' }, body));
+    }
+    getB2c() {
+        return this.mpesaService.b2cResponse;
     }
 };
 __decorate([
@@ -117,6 +136,35 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Array)
 ], MpesaController.prototype, "getBalance", null);
+__decorate([
+    (0, common_1.Post)('/b2c'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, b2cDto_1.B2CDto]),
+    __metadata("design:returntype", void 0)
+], MpesaController.prototype, "b2c", null);
+__decorate([
+    (0, common_1.Post)('/b2c_timeout'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], MpesaController.prototype, "b2cTimeout", null);
+__decorate([
+    (0, common_1.Post)('/b2c_result'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], MpesaController.prototype, "b2cResult", null);
+__decorate([
+    (0, common_1.Get)('/b2c_result'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Array)
+], MpesaController.prototype, "getB2c", null);
 MpesaController = __decorate([
     (0, common_1.Controller)('mpesa'),
     __metadata("design:paramtypes", [mpesa_service_1.MpesaService])

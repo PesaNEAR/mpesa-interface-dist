@@ -1,4 +1,5 @@
 import { HttpService } from '@nestjs/axios';
+import { B2CResponse } from 'src/interfaces/b2cResponse';
 import { BalanceResponse } from 'src/interfaces/balanceResponse';
 import { StkResponse } from 'src/interfaces/stkResponse';
 export declare class MpesaService {
@@ -12,4 +13,7 @@ export declare class MpesaService {
     accountBalance(accessToken: string, _callback: (data: BalanceResponse) => void): void;
     storeBalanceResponse(response: any): void;
     get balanceResponse(): any[];
+    business_2_customer(accessToken: string, amount: number, receiverAccountNumber: string, occasion: string, _callback: (data: B2CResponse) => void): void;
+    storeB2cResponse(response: any): void;
+    get b2cResponse(): any[];
 }
